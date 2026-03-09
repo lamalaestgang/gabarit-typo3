@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  GABARIT TYPO3 — Intégration front-end
+  ============================================================
+  Structure des zones de contenu TYPO3 :
+
+  [ZONE 1] colPos="0"  → Contenu principal (main content)
+  [ZONE 2] colPos="1"  → Sidebar droite
+  [ZONE 3] colPos="2"  → Bandeau pleine largeur (banner)
+  [ZONE 4] colPos="3"  → Pied de page colonne gauche
+  [ZONE 5] colPos="4"  → Pied de page colonne droite
+
+  Content Elements utilisés :
+  - CType="text"           → Texte simple
+  - CType="textpic"        → Texte avec image
+  - CType="image"          → Image seule
+  - CType="bullets"        → Liste à puces
+  - CType="table"          → Tableau
+  - CType="menu_section"   → Menu ancres
+  - CType="uploads"        → Liste de documents
+
+  Fluid Templates (Extbase/Fluid) :
+  - EXT:site_package/Resources/Private/Layouts/Default.html
+  - EXT:site_package/Resources/Private/Templates/Page/Default.html
+  - EXT:site_package/Resources/Private/Partials/Header/Navigation.html
+
+  Normes respectées :
+  - SGQRI 008-02 (accessibilité Web Québec)
+  - WCAG 2.1 niveau AA
+  - W3C HTML5 valide
+  - Balises ARIA complètes
+  ============================================================
+-->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Programme d'aide à la rénovation résidentielle — Ministère de l'Habitation du Québec"/>
+  <title>Programme d'aide à la rénovation | Ministère de l'Habitation du Québec</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ── RESET & VARIABLES ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --qc-blue:      #003087;
+      --qc-blue-mid:  #0055b3;
+      --qc-blue-lite: #e8f0fb;
+      --qc-red:       #c8102e;
+      --qc-gold:      #f0a500;
+      --qc-green:     #006b3c;
+      --bg:           #f7f7f5;
+      --white:        #ffffff;
+      --ink:          #1a1a2a;
+      --ink2:         #3a3a4a;
+      --muted:        #636375;
+      --border:       #dddbd5;
+      --warm:         #f2efe8;
+      --font-h: 'Libre Baskerville', Georgia, serif;
+      --font-b: 'Nunito Sans', system-ui, sans-serif;
+      --max-w: 1200px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-b);
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    a { color: var(--qc-blue-mid); }
+    a:hover { text-decoration: underline; }
+    img { max-width: 100%; height: auto; display: block; }
+
+    /* ── SKIP LINK (accessibilité WCAG) ── */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 1rem;
+      background: var(--qc-blue);
+      color: white;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      z-index: 9999;
+      transition: top 0.2s;
+    }
+    .skip-link:focus { top: 0.5rem; }
+
+    /* ── [ZONE TYPO3] Bandeau gouvernemental ── */
+    .gov-bar {
+      background: var(--qc-blue);
+      color: rgba(255,255,255,0.85);
+      font-size: 0.72rem;
+      font-family: var(--font-b);
+    }
+    .gov-bar-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0.4rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .gov-brand { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; }
+    .fleur-de-lis { font-size: 1rem; }
+    .gov-bar-links { display: flex; gap: 1.5rem; }
+    .gov-bar-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.68rem; }
+    .gov-bar-links a:hover { color: white; text-decoration: underline; }
+
+    /* ── [ZONE TYPO3] Header / Logo ── */
+    /* colPos="header" — Fluid Partial: Header/Logo.html */
+    .site-header {
+      background: var(--white);
+      border-bottom: 4px solid var(--qc-blue);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .site-header-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 80px;
+    }
+    .site-logo { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+    .logo-mark {
+      width: 52px; height: 52px;
+      background: var(--qc-blue);
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      font-family: var(--font-h);
+      font-size: 1.4rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .logo-text { line-height: 1.25; }
+    .logo-text strong {
+      display: block;
+      font-family: var(--font-h);
+      font-size: 1.05rem;
+      color: var(--qc-blue);
+      font-weight: 700;
+    }
+    .logo-text span { font-size: 0.72rem; color: var(--muted); }
+
+    .header-utils { display: flex; align-items: center; gap: 1.5rem; }
+    .header-search {
+      display: flex;
+      border: 1.5px solid var(--border);
+    }
+    .header-search input {
+      border: none; outline: none;
+      padding: 0.45rem 0.9rem;
+      font-family: var(--font-b);
+      font-size: 0.82rem;
+      width: 200px;
+      background: var(--warm);
+    }
+    .header-search button {
+      background: var(--qc-blue);
+      color: white; border: none;
+      padding: 0 0.9rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    .header-search button:hover { background: var(--qc-blue-mid); }
+
+    /* ── [ZONE TYPO3] Navigation principale ── */
+    /* Fluid Partial: Header/Navigation.html — TYPO3 HMENU tt_content */
+    .main-nav { background: var(--qc-blue-mid); }
+    .main-nav-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+    }
+    .nav-item { position: relative; }
+    .nav-item > a {
+      display: block;
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      padding: 0.9rem 1.1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background 0.18s;
+    }
+    .nav-item > a:hover,
+    .nav-item.active > a {
+      background: var(--qc-blue);
+      color: white;
+      text-decoration: none;
+    }
+    .nav-item.active > a {
+      border-bottom: 3px solid var(--qc-gold);
+    }
+
+    /* Sous-menu TYPO3 niveau 2 */
+    .nav-sub {
+      display: none;
+      position: absolute;
+      top: 100%; left: 0;
+      background: var(--white);
+      min-width: 240px;
+      border-top: 3px solid var(--qc-gold);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--qc-gold);
+      box-shadow: 0 8px 24px rgba(0,0,48,0.1);
+      z-index: 300;
+    }
+    .nav-item:hover .nav-sub { display: block; }
+    .nav-sub a {
+      display: block;
+      padding: 0.65rem 1.2rem;
+      font-size: 0.83rem;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-sub a:last-child { border: none; }
+    .nav-sub a:hover { background: var(--qc-blue-lite); color: var(--qc-blue); }
+
+    /* ── [ZONE TYPO3] Fil d'Ariane (Breadcrumb) ── */
+    /* CType="menu_section_pages" — HMENU spécial breadcrumb */
+    .breadcrumb {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0.6rem 2rem;
+    }
+    .breadcrumb ol {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      align-items: center;
+      font-size: 0.75rem;
+    }
+    .breadcrumb li { display: flex; align-items: center; gap: 0.3rem; }
+    .breadcrumb li::after { content: '›'; color: var(--muted); }
+    .breadcrumb li:last-child::after { display: none; }
+    .breadcrumb a { color: var(--qc-blue-mid); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb li:last-child span { color: var(--muted); }
+
+    /* ── [ZONE TYPO3] Bandeau hero colPos="2" ── */
+    /* CType="textpic" — image + texte superposés */
+    .page-hero {
+      background: linear-gradient(135deg, var(--qc-blue) 0%, #1565c0 60%, #1976d2 100%);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 40px,
+        rgba(255,255,255,0.015) 40px,
+        rgba(255,255,255,0.015) 80px
+      );
+    }
+    .page-hero-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 3rem 2rem;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-hero-content {}
+    .hero-category {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.15);
+      padding: 0.3rem 0.8rem;
+      margin-bottom: 1rem;
+      border-left: 3px solid var(--qc-gold);
+    }
+    .page-hero h1 {
+      font-family: var(--font-h);
+      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.8rem;
+      max-width: 700px;
+    }
+    .hero-lead { font-size: 1rem; opacity: 0.88; max-width: 600px; line-height: 1.7; }
+    .hero-meta {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    .hero-meta-item { font-size: 0.78rem; opacity: 0.8; }
+    .hero-meta-item strong { display: block; opacity: 1; font-size: 0.85rem; }
+
+    .hero-badge {
+      background: var(--qc-gold);
+      color: var(--ink);
+      padding: 1rem 1.5rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .hero-badge .amount {
+      font-family: var(--font-h);
+      font-size: 2rem;
+      font-weight: 700;
+      display: block;
+      line-height: 1;
+    }
+    .hero-badge .amount-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
+
+    /* ── MAIN LAYOUT ── */
+    .page-wrapper {
+      max-width: var(--max-w);
+      margin: 2rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    /* ── [ZONE TYPO3] Contenu principal colPos="0" ── */
+    .main-content {}
+
+    /* CType="text" — Élément texte TYPO3 */
+    .ce-text { margin-bottom: 2.5rem; }
+
+    .ce-header {
+      font-family: var(--font-h);
+      color: var(--qc-blue);
+      margin-bottom: 1rem;
+      line-height: 1.25;
+    }
+    .ce-header-1 { font-size: 1.9rem; font-weight: 700; }
+    .ce-header-2 { font-size: 1.4rem; font-weight: 700; padding-bottom: 0.5rem; border-bottom: 2px solid var(--qc-blue); }
+    .ce-header-3 { font-size: 1.15rem; font-weight: 700; }
+
+    .ce-bodytext { font-size: 0.92rem; color: var(--ink2); line-height: 1.8; }
+    .ce-bodytext p { margin-bottom: 1rem; }
+    .ce-bodytext ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+    .ce-bodytext ul li { margin-bottom: 0.4rem; }
+    .ce-bodytext strong { color: var(--ink); }
+
+    /* CType="textpic" — Texte + image TYPO3 */
+    .ce-textpic { margin-bottom: 2.5rem; }
+    .ce-textpic-imageright {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 2rem;
+      align-items: start;
+    }
+    .ce-textpic-imageleft {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    .ce-gallery img {
+      width: 100%;
+      border: 1px solid var(--border);
+    }
+    .ce-gallery figcaption {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+      font-style: italic;
+    }
+
+    /* CType="table" — Tableau TYPO3 */
+    .ce-table { margin-bottom: 2.5rem; overflow-x: auto; }
+    .ce-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .ce-table th {
+      background: var(--qc-blue);
+      color: white;
+      padding: 0.7rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.82rem;
+    }
+    .ce-table td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink2);
+    }
+    .ce-table tr:nth-child(even) td { background: var(--warm); }
+    .ce-table tr:hover td { background: var(--qc-blue-lite); }
+
+    /* CType="uploads" — Liste de documents TYPO3 */
+    .ce-uploads { margin-bottom: 2.5rem; }
+    .ce-uploads-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .ce-uploads-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.8rem 1rem;
+      background: var(--white);
+      border: 1px solid var(--border);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .ce-uploads-item:hover { border-color: var(--qc-blue-mid); background: var(--qc-blue-lite); }
+    .file-icon {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      background: var(--warm);
+      flex-shrink: 0;
+    }
+    .file-info { flex: 1; }
+    .file-name { font-size: 0.85rem; font-weight: 600; color: var(--qc-blue-mid); }
+    .file-meta { font-size: 0.7rem; color: var(--muted); }
+    .file-dl {
+      font-size: 0.72rem; font-weight: 700;
+      color: var(--qc-blue); text-decoration: none;
+      border: 1px solid var(--qc-blue);
+      padding: 0.3rem 0.7rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .file-dl:hover { background: var(--qc-blue); color: white; text-decoration: none; }
+
+    /* Bouton CTA TYPO3 */
+    .ce-btn {
+      display: inline-block;
+      background: var(--qc-blue);
+      color: white;
+      padding: 0.85rem 2rem;
+      font-family: var(--font-b);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: 2px solid var(--qc-blue);
+      transition: all 0.2s;
+      margin-top: 0.5rem;
+    }
+    .ce-btn:hover { background: transparent; color: var(--qc-blue); text-decoration: none; }
+    .ce-btn-secondary {
+      background: transparent;
+      color: var(--qc-blue);
+      border-color: var(--qc-blue);
+      margin-left: 0.8rem;
+    }
+    .ce-btn-secondary:hover { background: var(--qc-blue); color: white; }
+
+    /* Encadré info (CType="text" avec classe CSS bodytext-box) */
+    .ce-box {
+      border-left: 4px solid var(--qc-gold);
+      background: #fffbf0;
+      padding: 1.2rem 1.5rem;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+      line-height: 1.7;
+    }
+    .ce-box-blue {
+      border-left-color: var(--qc-blue);
+      background: var(--qc-blue-lite);
+    }
+    .ce-box-green {
+      border-left-color: var(--qc-green);
+      background: #f0faf5;
+    }
+    .ce-box strong { display: block; margin-bottom: 0.3rem; font-size: 0.92rem; }
+
+    /* Accordéon JS (liste FAQ) */
+    .ce-accordion { margin-bottom: 2.5rem; }
+    .accordion-item {
+      border: 1px solid var(--border);
+      border-top: none;
+    }
+    .accordion-item:first-child { border-top: 1px solid var(--border); }
+    .accordion-btn {
+      width: 100%;
+      background: var(--white);
+      border: none;
+      padding: 1rem 1.2rem;
+      text-align: left;
+      font-family: var(--font-b);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s;
+    }
+    .accordion-btn:hover { background: var(--warm); }
+    .accordion-btn.open { background: var(--qc-blue-lite); color: var(--qc-blue); }
+    .accordion-arrow { font-size: 0.75rem; transition: transform 0.25s; }
+    .accordion-btn.open .accordion-arrow { transform: rotate(180deg); }
+    .accordion-body {
+      display: none;
+      padding: 1rem 1.2rem 1.2rem;
+      font-size: 0.86rem;
+      color: var(--ink2);
+      line-height: 1.75;
+      background: var(--warm);
+      border-top: 1px solid var(--border);
+    }
+    .accordion-body.open { display: block; }
+
+    /* ── [ZONE TYPO3] Sidebar colPos="1" ── */
+    .sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    .sidebar-widget {
+      background: var(--white);
+      border: 1px solid var(--border);
+    }
+    .widget-head {
+      background: var(--qc-blue);
+      color: white;
+      padding: 0.75rem 1.1rem;
+      font-family: var(--font-h);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+    .widget-head.gold { background: var(--qc-gold); color: var(--ink); }
+    .widget-head.green { background: var(--qc-green); }
+    .widget-body { padding: 1.1rem; }
+
+    /* Widget liens rapides (CType="menu_section") */
+    .widget-links { list-style: none; }
+    .widget-links li { border-bottom: 1px solid var(--border); }
+    .widget-links li:last-child { border: none; }
+    .widget-links a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0;
+      font-size: 0.82rem;
+      color: var(--qc-blue-mid);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .widget-links a::before { content: '▸'; font-size: 0.6rem; color: var(--qc-gold); }
+    .widget-links a:hover { color: var(--qc-blue); text-decoration: underline; }
+
+    /* Widget contact */
+    .contact-widget { font-size: 0.83rem; color: var(--ink2); }
+    .contact-widget .cw-row {
+      display: flex; gap: 0.8rem; align-items: flex-start;
+      padding: 0.6rem 0; border-bottom: 1px solid var(--border);
+    }
+    .contact-widget .cw-row:last-child { border: none; }
+    .cw-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .cw-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+    .cw-val { font-size: 0.85rem; color: var(--ink); }
+
+    /* Widget admissibilité */
+    .eligibility-list { list-style: none; }
+    .eligibility-list li {
+      display: flex; gap: 0.7rem; align-items: flex-start;
+      padding: 0.5rem 0; border-bottom: 1px solid var(--border);
+      font-size: 0.82rem; color: var(--ink2);
+    }
+    .eligibility-list li:last-child { border: none; }
+    .elig-icon { font-size: 0.9rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+    /* Widget formulaire infolettre */
+    .nl-form { display: flex; flex-direction: column; gap: 0.6rem; }
+    .nl-form input {
+      border: 1.5px solid var(--border);
+      padding: 0.55rem 0.8rem;
+      font-family: var(--font-b);
+      font-size: 0.82rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .nl-form input:focus { border-color: var(--qc-blue); }
+    .nl-form button {
+      background: var(--qc-green);
+      color: white; border: none;
+      padding: 0.65rem;
+      font-family: var(--font-b);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .nl-form button:hover { background: #005530; }
+    .nl-success { display: none; font-size: 0.78rem; color: var(--qc-green); background: #f0faf5; padding: 0.5rem; text-align: center; }
+
+    /* ── [ZONE TYPO3] Footer colPos="3,4" ── */
+    .site-footer { background: var(--qc-blue); color: rgba(255,255,255,0.8); margin-top: 3rem; }
+    .footer-top {
+      max-width: var(--max-w); margin: 0 auto;
+      padding: 2.5rem 2rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 2rem;
+    }
+    .footer-about .fa-logo {
+      font-family: var(--font-h);
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.8rem;
+    }
+    .footer-about p { font-size: 0.78rem; line-height: 1.7; opacity: 0.75; }
+    .footer-col h4 {
+      color: white;
+      font-family: var(--font-h);
+      font-size: 0.88rem;
+      margin-bottom: 0.9rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 0.4rem; }
+    .footer-col ul a { color: rgba(255,255,255,0.7); font-size: 0.78rem; text-decoration: none; }
+    .footer-col ul a:hover { color: white; text-decoration: underline; }
+    .footer-bottom {
+      background: rgba(0,0,0,0.25);
+      text-align: center;
+      padding: 0.9rem 2rem;
+      font-size: 0.72rem;
+    }
+    .footer-bottom a { color: rgba(255,255,255,0.55); text-decoration: none; margin: 0 0.8rem; }
+    .footer-bottom a:hover { color: white; text-decoration: underline; }
+
+    /* BACK TO TOP */
+    .back-top {
+      position: fixed;
+      bottom: 2rem; right: 2rem;
+      background: var(--qc-blue);
+      color: white;
+      border: none;
+      width: 44px; height: 44px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 200;
+    }
+    .back-top.show { opacity: 1; pointer-events: all; }
+    .back-top:hover { background: var(--qc-blue-mid); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .page-wrapper { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .ce-textpic-imageright,
+      .ce-textpic-imageleft { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .gov-bar-links { display: none; }
+      .header-search { display: none; }
+      .main-nav-inner { overflow-x: auto; }
+    }
+    @media (max-width: 600px) {
+      .site-header-inner,
+      .gov-bar-inner,
+      .page-wrapper,
+      .breadcrumb-inner,
+      .page-hero-inner,
+      .footer-top { padding-left: 1rem; padding-right: 1rem; }
+      .footer-top { grid-template-columns: 1fr; }
+      .hero-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Lien d'évitement — WCAG 2.1 / SGQRI 008 -->
+<a href="#main-content" class="skip-link">Passer au contenu principal</a>
+
+<!-- ══ ZONE : Bandeau gouvernemental ══ -->
+<div class="gov-bar" role="banner">
+  <div class="gov-bar-inner">
+    <div class="gov-brand">
+      <span class="fleur-de-lis" aria-hidden="true">⚜</span>
+      Gouvernement du Québec
+    </div>
+    <nav class="gov-bar-links" aria-label="Liens gouvernementaux">
+      <a href="#">Québec.ca</a>
+      <a href="#">Accessibilité</a>
+      <a href="#">English</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ══ ZONE TYPO3 : Header / Logo — colPos="header" ══ -->
+<header class="site-header" role="banner">
+  <div class="site-header-inner">
+    <a href="#" class="site-logo" aria-label="Ministère de l'Habitation du Québec — Accueil">
+      <div class="logo-mark" aria-hidden="true">MH</div>
+      <div class="logo-text">
+        <strong>Ministère de l'Habitation</strong>
+        <span>Gouvernement du Québec</span>
+      </div>
+    </a>
+    <div class="header-utils">
+      <form class="header-search" role="search" aria-label="Recherche sur le site">
+        <input type="search" placeholder="Rechercher…" aria-label="Terme de recherche" id="search-input"/>
+        <button type="submit" aria-label="Lancer la recherche">🔍</button>
+      </form>
+    </div>
+  </div>
+</header>
+
+<!-- ══ ZONE TYPO3 : Navigation principale — HMENU niveau 1+2 ══ -->
+<nav class="main-nav" aria-label="Navigation principale">
+  <ul class="main-nav-inner" role="list">
+    <li class="nav-item">
+      <a href="#">Accueil</a>
+    </li>
+    <li class="nav-item active" aria-current="true">
+      <a href="#" aria-haspopup="true" aria-expanded="false">Programmes ▾</a>
+      <ul class="nav-sub" role="list">
+        <li><a href="#">Aide à la rénovation résidentielle</a></li>
+        <li><a href="#">Logement abordable</a></li>
+        <li><a href="#">Adaptation de domicile</a></li>
+        <li><a href="#">Réparations d'urgence</a></li>
+      </ul>
+    </li>
+    <li class="nav-item">
+      <a href="#" aria-haspopup="true">Publications ▾</a>
+      <ul class="nav-sub" role="list">
+        <li><a href="#">Rapports annuels</a></li>
+        <li><a href="#">Communiqués</a></li>
+        <li><a href="#">Formulaires</a></li>
+      </ul>
+    </li>
+    <li class="nav-item"><a href="#">À propos</a></li>
+    <li class="nav-item"><a href="#">Nous joindre</a></li>
+  </ul>
+</nav>
+
+<!-- ══ ZONE TYPO3 : Fil d'Ariane — HMENU rootline ══ -->
+<nav class="breadcrumb" aria-label="Fil d'Ariane">
+  <div class="breadcrumb-inner">
+    <ol>
+      <li><a href="#">Accueil</a></li>
+      <li><a href="#">Programmes</a></li>
+      <li><a href="#">Aide à la rénovation</a></li>
+      <li><span aria-current="page">Programme RénoVert Plus</span></li>
+    </ol>
+  </div>
+</nav>
+
+<!-- ══ ZONE TYPO3 : Bandeau hero — colPos="2" / CType="textpic" ══ -->
+<div class="page-hero" role="img" aria-label="Bandeau de la page — Programme RénoVert Plus">
+  <div class="page-hero-inner">
+    <div class="page-hero-content">
+      <div class="hero-category">
+        <span>Programme actif</span>
+      </div>
+      <h1>Programme RénoVert Plus</h1>
+      <p class="hero-lead">
+        Aide financière pour les travaux de rénovation, d'isolation et d'adaptation
+        des résidences principales au Québec. Admissibilité élargie pour 2025–2026.
+      </p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <strong>Date limite</strong>
+          31 décembre 2026
+        </div>
+        <div class="hero-meta-item">
+          <strong>Clientèle</strong>
+          Propriétaires-occupants
+        </div>
+        <div class="hero-meta-item">
+          <strong>Région</strong>
+          Toutes les régions du Québec
+        </div>
+      </div>
+    </div>
+    <div class="hero-badge" role="note" aria-label="Aide maximale disponible">
+      <span class="amount">40 000 $</span>
+      <span class="amount-label">Aide max.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LAYOUT PRINCIPAL : colPos="0" (gauche) + colPos="1" (sidebar) ══ -->
+<div class="page-wrapper">
+
+  <!-- ══ ZONE TYPO3 : Contenu principal — colPos="0" ══ -->
+  <main id="main-content" class="main-content" tabindex="-1">
+
+    <!-- CType="text" — Élément texte simple -->
+    <div class="ce-text">
+      <h2 class="ce-header ce-header-2">À propos du programme</h2>
+      <div class="ce-bodytext">
+        <p>Le programme <strong>RénoVert Plus</strong> offre une aide financière non remboursable aux propriétaires-occupants qui souhaitent effectuer des travaux d'amélioration de leur résidence principale. Il vise à améliorer l'efficacité énergétique, l'accessibilité et la salubrité des logements au Québec.</p>
+        <p>Ce programme est administré par le Ministère de l'Habitation du Québec en collaboration avec les municipalités régionales de comté (MRC).</p>
+      </div>
+    </div>
+
+    <!-- CType="text" avec encadré (classe bodytext-box dans TYPO3) -->
+    <div class="ce-box ce-box-blue">
+      <strong>⚡ Nouveauté 2025–2026</strong>
+      Le plafond de revenu admissible a été rehaussé à 95 000 $ pour les ménages de 2 personnes ou plus, ce qui élargit considérablement la clientèle admissible au programme.
+    </div>
+
+    <!-- CType="textpic" — Texte avec image à droite -->
+    <div class="ce-textpic">
+      <h2 class="ce-header ce-header-2">Travaux admissibles</h2>
+      <div class="ce-textpic-imageright">
+        <div class="ce-bodytext">
+          <p>Les travaux suivants sont couverts par le programme :</p>
+          <ul>
+            <li>Isolation des murs, du toit et des fondations</li>
+            <li>Remplacement des portes et fenêtres</li>
+            <li>Modernisation du système de chauffage</li>
+            <li>Adaptation pour personnes à mobilité réduite</li>
+            <li>Réfection de la toiture et des fondations</li>
+            <li>Installation de systèmes d'énergie renouvelable</li>
+          </ul>
+        </div>
+        <figure class="ce-gallery">
+          <!-- Zone image TYPO3 — fileadmin/images/programmes/renovert.jpg -->
+          <div style="background: linear-gradient(135deg, #c8e6c9, #a5d6a7); height:180px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border);">
+            <span style="font-size:3rem;" aria-hidden="true">🏠</span>
+          </div>
+          <figcaption>Travaux de rénovation résidentielle admissibles au programme.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- CType="table" — Tableau TYPO3 -->
+    <div class="ce-table">
+      <h2 class="ce-header ce-header-2">Montants d'aide selon le revenu</h2>
+      <table>
+        <caption class="sr-only">Barème d'aide financière selon le revenu annuel du ménage</caption>
+        <thead>
+          <tr>
+            <th scope="col">Revenu annuel du ménage</th>
+            <th scope="col">Aide maximale</th>
+            <th scope="col">% des coûts couverts</th>
+            <th scope="col">Délai de traitement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Moins de 35 000 $</td>
+            <td><strong>40 000 $</strong></td>
+            <td>95 %</td>
+            <td>30 jours</td>
+          </tr>
+          <tr>
+            <td>35 000 $ à 55 000 $</td>
+            <td><strong>30 000 $</strong></td>
+            <td>75 %</td>
+            <td>45 jours</td>
+          </tr>
+          <tr>
+            <td>55 000 $ à 75 000 $</td>
+            <td><strong>20 000 $</strong></td>
+            <td>50 %</td>
+            <td>45 jours</td>
+          </tr>
+          <tr>
+            <td>75 000 $ à 95 000 $</td>
+            <td><strong>10 000 $</strong></td>
+            <td>30 %</td>
+            <td>60 jours</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CType="text" — Accordéon FAQ -->
+    <div class="ce-accordion">
+      <h2 class="ce-header ce-header-2" style="margin-bottom:1.2rem">Questions fréquentes</h2>
+
+      <div class="accordion-item">
+        <button class="accordion-btn" aria-expanded="false" aria-controls="faq1">
+          Comment soumettre ma demande ?
+          <span class="accordion-arrow" aria-hidden="true">▼</span>
+        </button>
+        <div class="accordion-body" id="faq1" role="region">
+          Vous pouvez soumettre votre demande en ligne via le portail citoyen, par courrier ou en personne dans votre bureau régional. Assurez-vous de joindre tous les documents requis pour éviter tout délai de traitement.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" aria-expanded="false" aria-controls="faq2">
+          Puis-je combiner ce programme avec d'autres aides ?
+          <span class="accordion-arrow" aria-hidden="true">▼</span>
+        </button>
+        <div class="accordion-body" id="faq2" role="region">
+          Oui, RénoVert Plus est cumulable avec certains crédits d'impôt provinciaux et fédéraux. Il ne peut toutefois pas être combiné avec le programme LogisRénov pour les mêmes travaux.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" aria-expanded="false" aria-controls="faq3">
+          Quels documents dois-je fournir ?
+          <span class="accordion-arrow" aria-hidden="true">▼</span>
+        </button>
+        <div class="accordion-body" id="faq3" role="region">
+          Preuve de propriété, dernière déclaration de revenus, soumissions de deux entrepreneurs certifiés RBQ, et formulaire de demande dûment rempli. Pour les travaux d'adaptation, un rapport d'ergothérapeute peut être exigé.
+        </div>
+      </div>
+    </div>
+
+    <!-- CType="uploads" — Liste de documents téléchargeables -->
+    <div class="ce-uploads">
+      <h2 class="ce-header ce-header-2" style="margin-bottom:1rem">Documents à télécharger</h2>
+      <ul class="ce-uploads-list" aria-label="Documents du programme RénoVert Plus">
+        <li class="ce-uploads-item">
+          <div class="file-icon" aria-hidden="true">📄</div>
+          <div class="file-info">
+            <div class="file-name">Guide du demandeur — RénoVert Plus 2025-2026</div>
+            <div class="file-meta">PDF · 2,4 Mo · Mis à jour le 15 janvier 2026</div>
+          </div>
+          <a href="#" class="file-dl" aria-label="Télécharger le guide du demandeur en PDF">Télécharger</a>
+        </li>
+        <li class="ce-uploads-item">
+          <div class="file-icon" aria-hidden="true">📋</div>
+          <div class="file-info">
+            <div class="file-name">Formulaire de demande d'aide (Form. HAB-2026-01)</div>
+            <div class="file-meta">PDF · 890 Ko · Formulaire remplissable</div>
+          </div>
+          <a href="#" class="file-dl" aria-label="Télécharger le formulaire de demande">Télécharger</a>
+        </li>
+        <li class="ce-uploads-item">
+          <div class="file-icon" aria-hidden="true">📊</div>
+          <div class="file-info">
+            <div class="file-name">Liste des entrepreneurs certifiés RBQ — Région du Saguenay–Lac-Saint-Jean</div>
+            <div class="file-meta">XLSX · 345 Ko · Mis à jour le 1er mars 2026</div>
+          </div>
+          <a href="#" class="file-dl" aria-label="Télécharger la liste des entrepreneurs">Télécharger</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- CTA principal -->
+    <div class="ce-text">
+      <div class="ce-box ce-box-green">
+        <strong>✅ Prêt à faire votre demande ?</strong>
+        Vérifiez votre admissibilité en ligne en moins de 5 minutes, puis soumettez votre dossier complet via le portail citoyen.
+      </div>
+      <a href="#" class="ce-btn" role="button">Soumettre une demande →</a>
+      <a href="#" class="ce-btn ce-btn-secondary" role="button">Vérifier mon admissibilité</a>
+    </div>
+
+  </main><!-- /main colPos="0" -->
+
+  <!-- ══ ZONE TYPO3 : Sidebar — colPos="1" ══ -->
+  <aside class="sidebar" aria-label="Informations complémentaires">
+
+    <!-- Widget : Liens rapides — CType="menu_section" -->
+    <div class="sidebar-widget">
+      <div class="widget-head">Programmes connexes</div>
+      <div class="widget-body">
+        <ul class="widget-links" aria-label="Programmes connexes">
+          <li><a href="#">LogisRénov — Locataires</a></li>
+          <li><a href="#">Adaptation de domicile</a></li>
+          <li><a href="#">Réparations d'urgence</a></li>
+          <li><a href="#">Supplément au loyer</a></li>
+          <li><a href="#">AccèsLogis Québec</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Widget : Critères d'admissibilité -->
+    <div class="sidebar-widget">
+      <div class="widget-head gold">Admissibilité rapide</div>
+      <div class="widget-body">
+        <ul class="eligibility-list" aria-label="Critères d'admissibilité">
+          <li><span class="elig-icon" aria-hidden="true">✅</span> Propriétaire-occupant</li>
+          <li><span class="elig-icon" aria-hidden="true">✅</span> Résidence principale au Québec</li>
+          <li><span class="elig-icon" aria-hidden="true">✅</span> Revenu ≤ 95 000 $ / année</li>
+          <li><span class="elig-icon" aria-hidden="true">✅</span> Taxes municipales à jour</li>
+          <li><span class="elig-icon" aria-hidden="true">❌</span> Résidences secondaires exclues</li>
+          <li><span class="elig-icon" aria-hidden="true">❌</span> Immeubles commerciaux exclus</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Widget : Contact — CType="text" -->
+    <div class="sidebar-widget">
+      <div class="widget-head green">Nous joindre</div>
+      <div class="widget-body">
+        <div class="contact-widget">
+          <div class="cw-row">
+            <span class="cw-icon" aria-hidden="true">📞</span>
+            <div>
+              <div class="cw-label">Téléphone</div>
+              <div class="cw-val"><a href="tel:18008630003">1 800 463-0003</a></div>
+            </div>
+          </div>
+          <div class="cw-row">
+            <span class="cw-icon" aria-hidden="true">🕐</span>
+            <div>
+              <div class="cw-label">Heures d'ouverture</div>
+              <div class="cw-val">Lun–Ven : 8h30 – 16h30</div>
+            </div>
+          </div>
+          <div class="cw-row">
+            <span class="cw-icon" aria-hidden="true">✉️</span>
+            <div>
+              <div class="cw-label">Courriel</div>
+              <div class="cw-val"><a href="mailto:info@habitation.gouv.qc.ca">info@habitation.gouv.qc.ca</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Widget : Infolettre -->
+    <div class="sidebar-widget">
+      <div class="widget-head">Infolettre</div>
+      <div class="widget-body">
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:0.8rem;">Restez informé des nouveaux programmes et mises à jour.</p>
+        <div class="nl-form">
+          <input type="email" id="nl-email" placeholder="votre@courriel.qc.ca" aria-label="Votre adresse courriel"/>
+          <button onclick="subscribeNl()" type="button">S'abonner gratuitement</button>
+          <div class="nl-success" id="nl-success" role="status" aria-live="polite">✓ Abonnement confirmé !</div>
+        </div>
+      </div>
+    </div>
+
+  </aside><!-- /sidebar colPos="1" -->
+
+</div><!-- /page-wrapper -->
+
+<!-- ══ ZONE TYPO3 : Footer — colPos="3" et colPos="4" ══ -->
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-top">
+    <div class="footer-about">
+      <div class="fa-logo">Ministère de l'Habitation du Québec</div>
+      <p>Le Ministère travaille chaque jour pour améliorer les conditions de logement de la population québécoise, en offrant des programmes d'aide à la rénovation, à l'adaptation et à l'abordabilité.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Programmes</h4>
+      <ul>
+        <li><a href="#">RénoVert Plus</a></li>
+        <li><a href="#">LogisRénov</a></li>
+        <li><a href="#">Adaptation domicile</a></li>
+        <li><a href="#">AccèsLogis</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Le Ministère</h4>
+      <ul>
+        <li><a href="#">À propos</a></li>
+        <li><a href="#">Organigramme</a></li>
+        <li><a href="#">Emplois</a></li>
+        <li><a href="#">Rapports annuels</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Ressources</h4>
+      <ul>
+        <li><a href="#">Formulaires</a></li>
+        <li><a href="#">Publications</a></li>
+        <li><a href="#">Accessibilité</a></li>
+        <li><a href="#">Nous joindre</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <a href="#">Accessibilité Web</a>
+    <a href="#">Politique de confidentialité</a>
+    <a href="#">Conditions d'utilisation</a>
+    <a href="#">Plan du site</a>
+    · © Gouvernement du Québec 2026
+  </div>
+</footer>
+
+<!-- Bouton retour en haut -->
+<button class="back-top" id="backTop" aria-label="Retour en haut de la page" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // ── ACCORDÉON (FAQ) ──
+  document.querySelectorAll('.accordion-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const body = document.getElementById(this.getAttribute('aria-controls'));
+      const isOpen = this.classList.contains('open');
+
+      // Ferme tous
+      document.querySelectorAll('.accordion-btn').forEach(b => {
+        b.classList.remove('open');
+        b.setAttribute('aria-expanded', 'false');
+      });
+      document.querySelectorAll('.accordion-body').forEach(b => b.classList.remove('open'));
+
+      // Ouvre celui cliqué si fermé
+      if (!isOpen) {
+        this.classList.add('open');
+        this.setAttribute('aria-expanded', 'true');
+        body.classList.add('open');
+      }
+    });
+  });
+
+  // ── INFOLETTRE ──
+  function subscribeNl() {
+    const email = document.getElementById('nl-email').value.trim();
+    if (!email || !email.includes('@')) {
+      alert('Veuillez entrer une adresse courriel valide.');
+      return;
+    }
+    document.getElementById('nl-success').style.display = 'block';
+    document.getElementById('nl-email').value = '';
+  }
+
+  // ── RECHERCHE ──
+  document.querySelector('.header-search').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const q = document.getElementById('search-input').value.trim();
+    if (q) alert(`Recherche : "${q}"\n(Démonstration — connecter à l'API TYPO3 en production)`);
+  });
+
+  // ── RETOUR EN HAUT ──
+  const backTop = document.getElementById('backTop');
+  window.addEventListener('scroll', () => {
+    backTop.classList.toggle('show', window.scrollY > 400);
+  });
+</script>
+
+</body>
+</html>
