@@ -1,37 +1,5 @@
 <!DOCTYPE html>
-<!--
-  ============================================================
-  GABARIT TYPO3 — Intégration front-end
-  ============================================================
-  Structure des zones de contenu TYPO3 :
 
-  [ZONE 1] colPos="0"  → Contenu principal (main content)
-  [ZONE 2] colPos="1"  → Sidebar droite
-  [ZONE 3] colPos="2"  → Bandeau pleine largeur (banner)
-  [ZONE 4] colPos="3"  → Pied de page colonne gauche
-  [ZONE 5] colPos="4"  → Pied de page colonne droite
-
-  Content Elements utilisés :
-  - CType="text"           → Texte simple
-  - CType="textpic"        → Texte avec image
-  - CType="image"          → Image seule
-  - CType="bullets"        → Liste à puces
-  - CType="table"          → Tableau
-  - CType="menu_section"   → Menu ancres
-  - CType="uploads"        → Liste de documents
-
-  Fluid Templates (Extbase/Fluid) :
-  - EXT:site_package/Resources/Private/Layouts/Default.html
-  - EXT:site_package/Resources/Private/Templates/Page/Default.html
-  - EXT:site_package/Resources/Private/Partials/Header/Navigation.html
-
-  Normes respectées :
-  - SGQRI 008-02 (accessibilité Web Québec)
-  - WCAG 2.1 niveau AA
-  - W3C HTML5 valide
-  - Balises ARIA complètes
-  ============================================================
--->
 <html lang="fr">
 <head>
   <meta charset="UTF-8"/>
@@ -691,10 +659,8 @@
 </head>
 <body>
 
-<!-- Lien d'évitement — WCAG 2.1 / SGQRI 008 -->
 <a href="#main-content" class="skip-link">Passer au contenu principal</a>
 
-<!-- ══ ZONE : Bandeau gouvernemental ══ -->
 <div class="gov-bar" role="banner">
   <div class="gov-bar-inner">
     <div class="gov-brand">
@@ -709,7 +675,6 @@
   </div>
 </div>
 
-<!-- ══ ZONE TYPO3 : Header / Logo — colPos="header" ══ -->
 <header class="site-header" role="banner">
   <div class="site-header-inner">
     <a href="#" class="site-logo" aria-label="Ministère de l'Habitation du Québec — Accueil">
@@ -728,7 +693,6 @@
   </div>
 </header>
 
-<!-- ══ ZONE TYPO3 : Navigation principale — HMENU niveau 1+2 ══ -->
 <nav class="main-nav" aria-label="Navigation principale">
   <ul class="main-nav-inner" role="list">
     <li class="nav-item">
@@ -756,7 +720,6 @@
   </ul>
 </nav>
 
-<!-- ══ ZONE TYPO3 : Fil d'Ariane — HMENU rootline ══ -->
 <nav class="breadcrumb" aria-label="Fil d'Ariane">
   <div class="breadcrumb-inner">
     <ol>
@@ -768,7 +731,6 @@
   </div>
 </nav>
 
-<!-- ══ ZONE TYPO3 : Bandeau hero — colPos="2" / CType="textpic" ══ -->
 <div class="page-hero" role="img" aria-label="Bandeau de la page — Programme RénoVert Plus">
   <div class="page-hero-inner">
     <div class="page-hero-content">
@@ -802,10 +764,8 @@
   </div>
 </div>
 
-<!-- ══ LAYOUT PRINCIPAL : colPos="0" (gauche) + colPos="1" (sidebar) ══ -->
 <div class="page-wrapper">
 
-  <!-- ══ ZONE TYPO3 : Contenu principal — colPos="0" ══ -->
   <main id="main-content" class="main-content" tabindex="-1">
 
     <!-- CType="text" — Élément texte simple -->
@@ -819,7 +779,7 @@
 
     <!-- CType="text" avec encadré (classe bodytext-box dans TYPO3) -->
     <div class="ce-box ce-box-blue">
-      <strong>⚡ Nouveauté 2025–2026</strong>
+      <strong> Nouveauté 2025–2026</strong>
       Le plafond de revenu admissible a été rehaussé à 95 000 $ pour les ménages de 2 personnes ou plus, ce qui élargit considérablement la clientèle admissible au programme.
     </div>
 
@@ -841,7 +801,6 @@
         <figure class="ce-gallery">
           <!-- Zone image TYPO3 — fileadmin/images/programmes/renovert.jpg -->
           <div style="background: linear-gradient(135deg, #c8e6c9, #a5d6a7); height:180px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border);">
-            <span style="font-size:3rem;" aria-hidden="true">🏠</span>
           </div>
           <figcaption>Travaux de rénovation résidentielle admissibles au programme.</figcaption>
         </figure>
@@ -936,7 +895,7 @@
           <a href="#" class="file-dl" aria-label="Télécharger le guide du demandeur en PDF">Télécharger</a>
         </li>
         <li class="ce-uploads-item">
-          <div class="file-icon" aria-hidden="true">📋</div>
+          <div class="file-icon" aria-hidden="true"></div>
           <div class="file-info">
             <div class="file-name">Formulaire de demande d'aide (Form. HAB-2026-01)</div>
             <div class="file-meta">PDF · 890 Ko · Formulaire remplissable</div>
@@ -944,7 +903,7 @@
           <a href="#" class="file-dl" aria-label="Télécharger le formulaire de demande">Télécharger</a>
         </li>
         <li class="ce-uploads-item">
-          <div class="file-icon" aria-hidden="true">📊</div>
+          <div class="file-icon" aria-hidden="true"></div>
           <div class="file-info">
             <div class="file-name">Liste des entrepreneurs certifiés RBQ — Région du Saguenay–Lac-Saint-Jean</div>
             <div class="file-meta">XLSX · 345 Ko · Mis à jour le 1er mars 2026</div>
@@ -957,7 +916,7 @@
     <!-- CTA principal -->
     <div class="ce-text">
       <div class="ce-box ce-box-green">
-        <strong>✅ Prêt à faire votre demande ?</strong>
+        <strong> Prêt à faire votre demande ?</strong>
         Vérifiez votre admissibilité en ligne en moins de 5 minutes, puis soumettez votre dossier complet via le portail citoyen.
       </div>
       <a href="#" class="ce-btn" role="button">Soumettre une demande →</a>
